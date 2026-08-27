@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   // Canonical origin for SEO (canonical/og/sitemap URLs).
   // Override per-deployment with the SITE_URL build variable.
-  site: process.env.SITE_URL ?? 'https://law.misha299235.workers.dev',
+  site: process.env.SITE_URL ?? 'https://advokat-uzhgorod.misha299235.workers.dev',
   adapter: cloudflare(),
 
   build: {
