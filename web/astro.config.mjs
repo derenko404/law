@@ -3,11 +3,11 @@ import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
-import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://advokat-uzhgorod.com.ua',
+  // Current production domain; swap when the lawyer's own domain moves over
+  site: 'https://derenko.online',
   adapter: cloudflare(),
 
   build: {
@@ -18,5 +18,4 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [sitemap()],
 });

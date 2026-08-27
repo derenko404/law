@@ -1,6 +1,13 @@
 ---
 import Logo from './Logo.astro';
-import { site } from '../data/site';
+import { site as fallbackMeta } from '../data/site';
+import type { SiteSettings } from '../lib/cms';
+
+interface Props {
+  settings: SiteSettings;
+}
+const { settings } = Astro.props;
+const site = { ...fallbackMeta, ...settings };
 
 const year = new Date().getFullYear();
 ---

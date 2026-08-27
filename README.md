@@ -19,7 +19,7 @@ Website for a lawyer in Uzhhorod. Three-part plan:
 - Brand: gold `--color-gold-500: #cc8800` (extracted from the logo) — all brand
   colors are CSS variables in `src/styles/global.css` `@theme`, swap in one place.
 - Logo emblem vectorized to SVG (`src/components/Emblem.astro`, potrace from
-  the original PNG in `research/logo.png`), colored via `currentColor`.
+  the original site's logo PNG), colored via `currentColor`.
 - Fonts: Forum (display, Cyrillic) + Manrope (body), Google Fonts.
 - Editable data lives in `src/data/*.ts` — shaped to be replaced by Payload
   fetches in part 2 (services + placeholder prices, contacts, socials, stats,
@@ -28,6 +28,3 @@ Website for a lawyer in Uzhhorod. Three-part plan:
   Integration TODOs for Payload (persist lead) and Telegram (notify) are marked
   inside.
 
-## research/
-
-Original assets pulled from the current site (logo PNG, traced SVG).

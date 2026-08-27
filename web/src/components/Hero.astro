@@ -1,6 +1,12 @@
 ---
 import Emblem from './Emblem.astro';
-import { site, stats } from '../data/site';
+import type { SiteSettings } from '../lib/cms';
+
+interface Props {
+  settings: SiteSettings;
+}
+const { settings } = Astro.props;
+const stats = settings.stats;
 ---
 
 <section id="top" class="relative overflow-hidden bg-ink-950 pt-20">
@@ -15,13 +21,13 @@ import { site, stats } from '../data/site';
       <div class="border border-gold-500/25 px-6 py-20 sm:px-12 md:py-28 lg:px-20">
         <div class="relative max-w-3xl">
           <p class="mb-5 text-xs font-bold tracking-[0.35em] text-gold-400 uppercase">
-            Адвокатське бюро · {site.city}
+            Адвокатське бюро · {settings.city}
           </p>
           <h1 class="display text-5xl leading-[1.08] text-white sm:text-6xl lg:text-7xl">
             Юридичний захист ваших прав та інтересів
           </h1>
           <p class="mt-7 max-w-xl text-lg leading-relaxed text-white/70">
-            Адвокат {site.lawyer} — 21 рік юридичної практики, колишній працівник
+            Адвокат {settings.lawyer} — 21 рік юридичної практики, колишній працівник
             прокуратури. Кримінальні, цивільні, адміністративні, митні та сімейні справи в
             Ужгороді й по всій Україні.
           </p>
@@ -34,10 +40,10 @@ import { site, stats } from '../data/site';
               Отримати консультацію
             </a>
             <a
-              href={site.phoneHref}
+              href={settings.phoneHref}
               class="rounded-sm border border-gold-500/50 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-gold-200 uppercase transition-colors hover:border-gold-400 hover:text-gold-400"
             >
-              {site.phone}
+              {settings.phone}
             </a>
           </div>
         </div>

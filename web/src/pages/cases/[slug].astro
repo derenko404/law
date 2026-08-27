@@ -1,26 +1,33 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import PageHero from '../../components/PageHero.astro';
 import Footer from '../../components/Footer.astro';
+import { cmsEnv, getSettings, getServices, getCase } from '../../lib/cms';
+import { lexicalToHtml } from '../../lib/lexical';
 
-export async function getStaticPaths() {
-  const cases = await getCollection('cases');
-  return cases.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
-}
+export const prerender = false;
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const env = cmsEnv();
+const [settings, services, entry] = await Promise.all([
+  getSettings(env),
+  getServices(env),
+  getCase(env, Astro.params.slug!),
+]);
+if (!entry) return Astro.rewrite('/404');
+
+const html = lexicalToHtml(entry.content);
 ---
 
-<Base title={`${entry.data.title} — АБ «Марина В.Г. Юридичний захист»`} description={entry.data.description}>
-  <Header />
+<Base
+  title={`${entry.title} — АБ «Марина В.Г. Юридичний захист»`}
+  description={entry.description}
+  settings={settings}
+  services={services}
+>
+  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
   <main>
-    <PageHero eyebrow={entry.data.category} title={entry.data.title} />
+    <PageHero eyebrow={entry.category} title={entry.title} />
 
     <article class="bg-white py-16">
       <div class="mx-auto max-w-3xl px-4 sm:px-6">
@@ -28,13 +35,12 @@ const { Content } = await render(entry);
           <svg class="h-5 w-5 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <path d="M4 12l5 5L20 7" />
           </svg>
-          Результат: {entry.data.result}
+          Результат: {entry.result}
         </p>
         <div
           class="prose prose-slate max-w-none prose-headings:font-(family-name:--font-display) prose-headings:font-normal prose-headings:tracking-wide prose-a:text-gold-500"
-        >
-          <Content />
-        </div>
+          set:html={html}
+        />
 
         <div class="mt-12 border-t-2 border-gold-500 bg-porcelain p-8 text-center">
           <h2 class="display text-2xl text-ink-900">Схожа ситуація?</h2>
@@ -61,5 +67,5 @@ const { Content } = await render(entry);
       </div>
     </article>
   </main>
-  <Footer />
+  <Footer settings={settings} />
 </Base>

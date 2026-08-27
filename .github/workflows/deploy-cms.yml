@@ -1,0 +1,26 @@
+name: Deploy CMS
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'cms/**'
+      - '.github/workflows/deploy-cms.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cms
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Railway
+        # Requires repo secrets: RAILWAY_TOKEN (project token),
+        # and the Railway service configured with root directory `cms`.
+        run: npx -y @railway/cli up --service cms --ci
+        working-directory: cms
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

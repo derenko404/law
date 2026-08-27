@@ -1,6 +1,12 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { services, extraAreas } from '../data/services';
+import type { CmsService } from '../lib/cms';
+
+interface Props {
+  services: CmsService[];
+  extraAreas: string[];
+}
+const { services, extraAreas } = Astro.props;
 
 const icons: Record<string, string> = {
   shield:

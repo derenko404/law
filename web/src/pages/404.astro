@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Emblem from '../components/Emblem.astro';
+import { cmsEnv, getSettings } from '../lib/cms';
+
+export const prerender = false;
+
+const env = cmsEnv();
+const settings = await getSettings(env);
+
+Astro.response.status = 404;
+---
+
+<Base title="Сторінку не знайдено — АБ «Марина В.Г. Юридичний захист»" settings={settings}>
+  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
+  <main class="flex min-h-[70vh] items-center justify-center bg-ink-950 pt-20">
+    <div class="px-4 py-24 text-center">
+      <Emblem class="mx-auto h-20 w-20 text-gold-500/60" />
+      <h1 class="display mt-8 text-6xl text-white">404</h1>
+      <p class="mt-4 text-white/60">Такої сторінки не існує або її було переміщено.</p>
+      <a
+        href="/"
+        class="mt-8 inline-block rounded-sm bg-gold-500 px-8 py-4 text-sm font-bold tracking-wide text-ink-950 uppercase transition-colors hover:bg-gold-400"
+      >
+        На головну
+      </a>
+    </div>
+  </main>
+  <Footer settings={settings} />
+</Base>

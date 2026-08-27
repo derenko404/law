@@ -8,17 +8,27 @@ import Cases from '../components/Cases.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
+import { cmsEnv, getSettings, getServices, getTestimonials } from '../lib/cms';
+
+export const prerender = false;
+
+const env = cmsEnv();
+const [settings, services, testimonials] = await Promise.all([
+  getSettings(env),
+  getServices(env),
+  getTestimonials(env),
+]);
 ---
 
-<Base>
-  <Header />
+<Base settings={settings} services={services}>
+  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
   <main>
-    <Hero />
-    <Services />
+    <Hero settings={settings} />
+    <Services services={services} extraAreas={settings.extraAreas} />
     <About />
     <Cases />
-    <Testimonials />
-    <Contact />
+    <Testimonials testimonials={testimonials} />
+    <Contact settings={settings} services={services} />
   </main>
-  <Footer />
+  <Footer settings={settings} />
 </Base>

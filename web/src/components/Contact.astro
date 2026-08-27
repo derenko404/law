@@ -2,7 +2,15 @@
 import SectionHeading from './SectionHeading.astro';
 import Emblem from './Emblem.astro';
 import ConsultForm from './ConsultForm.astro';
-import { site, socials } from '../data/site';
+import type { CmsService, SiteSettings } from '../lib/cms';
+
+interface Props {
+  settings: SiteSettings;
+  services: CmsService[];
+}
+const { settings, services } = Astro.props;
+const site = settings;
+const socials = settings.socials;
 
 const socialIcons: Record<string, string> = {
   facebook:
@@ -90,7 +98,7 @@ const socialIcons: Record<string, string> = {
 
       <!-- Form -->
       <div class="bg-porcelain p-10 lg:col-span-3">
-        <ConsultForm idPrefix="contact" />
+        <ConsultForm idPrefix="contact" services={services} phone={settings.phone} />
       </div>
     </div>
   </div>

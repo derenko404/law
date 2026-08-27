@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 
+import { cmsEnv, createLead } from '../../lib/cms';
+
 export const prerender = false;
 
 interface ConsultationRequest {
@@ -10,11 +12,9 @@ interface ConsultationRequest {
 }
 
 /**
- * Accepts consultation requests from the landing form.
- *
- * Part 2/3 integration point: this handler will forward the request to
- * Payload CMS (persist the lead) and to the Telegram bot (notify the lawyer).
- * For now it validates and acknowledges.
+ * Accepts consultation requests from the website form and forwards them to
+ * Payload CMS (`leads` collection). Payload's afterChange hook notifies the
+ * lawyer via Telegram.
  */
 export const POST: APIRoute = async ({ request }) => {
   let body: ConsultationRequest;
@@ -33,17 +33,15 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ error: 'Field too long' }, { status: 422 });
   }
 
-  const lead = {
+  const ok = await createLead(cmsEnv(), {
     name,
     phone,
     service: String(body.service ?? '').slice(0, 100),
     message: String(body.message ?? '').slice(0, 5000),
-    receivedAt: new Date().toISOString(),
-  };
+  });
 
-  // TODO(part-2): POST lead to Payload CMS collection `consultation-requests`.
-  // TODO(part-3): notify lawyer via Telegram bot.
-  console.log('consultation request', lead);
-
+  if (!ok) {
+    return Response.json({ error: 'Failed to submit' }, { status: 502 });
+  }
   return Response.json({ ok: true });
 };

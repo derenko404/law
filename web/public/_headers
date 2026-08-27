@@ -1,0 +1,18 @@
+# Browser caching for stable public assets.
+# /_astro/* immutable rule is appended by @astrojs/cloudflare at build time.
+# HTML stays max-age=0 + ETag so deploys are visible immediately.
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+/favicon.png
+  Cache-Control: public, max-age=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+
+/og.png
+  Cache-Control: public, max-age=86400

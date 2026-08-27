@@ -1,56 +1,58 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import PageHero from '../../components/PageHero.astro';
 import Footer from '../../components/Footer.astro';
+import { cmsEnv, getSettings, getServices, getArticle } from '../../lib/cms';
+import { lexicalToHtml } from '../../lib/lexical';
 
-export async function getStaticPaths() {
-  const articles = await getCollection('articles');
-  return articles.map((article) => ({
-    params: { slug: article.id },
-    props: { article },
-  }));
-}
+export const prerender = false;
 
-const { article } = Astro.props;
-const { Content } = await render(article);
+const env = cmsEnv();
+const [settings, services, article] = await Promise.all([
+  getSettings(env),
+  getServices(env),
+  getArticle(env, Astro.params.slug!),
+]);
+if (!article) return Astro.rewrite('/404');
 
+const html = lexicalToHtml(article.content);
 const fmt = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const articleLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: article.data.title,
-  description: article.data.description,
-  datePublished: article.data.pubDate.toISOString(),
+  headline: article.title,
+  description: article.description,
+  datePublished: article.publishedAt,
   inLanguage: 'uk',
-  author: { '@type': 'Person', name: 'Марина Віктор Георгійович' },
-  publisher: { '@type': 'LegalService', name: 'АБ «Марина В.Г. Юридичний захист»' },
+  author: { '@type': 'Person', name: settings.lawyer },
+  publisher: { '@type': 'LegalService', name: settings.name },
   mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
 };
 ---
 
 <Base
-  title={`${article.data.title} — АБ «Марина В.Г. Юридичний захист»`}
-  description={article.data.description}
+  title={`${article.title} — АБ «Марина В.Г. Юридичний захист»`}
+  description={article.description}
   ogType="article"
+  settings={settings}
+  services={services}
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
-  <Header />
+  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
   <main>
-    <PageHero eyebrow={article.data.category ?? 'Стаття'} title={article.data.title} />
+    <PageHero eyebrow={article.category ?? 'Стаття'} title={article.title} />
 
     <article class="bg-white py-16">
       <div class="mx-auto max-w-3xl px-4 sm:px-6">
         <p class="mb-8 text-sm font-bold tracking-wide text-muted uppercase">
-          <time datetime={article.data.pubDate.toISOString()}>{fmt.format(article.data.pubDate)}</time>
+          <time datetime={article.publishedAt}>{fmt.format(new Date(article.publishedAt))}</time>
         </p>
         <div
           class="prose prose-slate max-w-none prose-headings:font-(family-name:--font-display) prose-headings:font-normal prose-headings:tracking-wide prose-a:text-gold-500"
-        >
-          <Content />
-        </div>
+          set:html={html}
+        />
 
         <div class="mt-12 border-t-2 border-gold-500 bg-porcelain p-8 text-center">
           <h2 class="display text-2xl text-ink-900">Потрібна допомога у схожій ситуації?</h2>
@@ -77,5 +79,5 @@ const articleLd = {
       </div>
     </article>
   </main>
-  <Footer />
+  <Footer settings={settings} />
 </Base>

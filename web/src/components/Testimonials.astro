@@ -1,6 +1,12 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { testimonials, clients } from '../data/content';
+import { clients } from '../data/content';
+import type { CmsTestimonial } from '../lib/cms';
+
+interface Props {
+  testimonials: CmsTestimonial[];
+}
+const { testimonials } = Astro.props;
 ---
 
 <section id="testimonials" class="bg-porcelain py-24">

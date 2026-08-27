@@ -1,19 +1,27 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
 import ConsultModal from '../components/ConsultModal.astro';
 import { site } from '../data/site';
+
+import type { CmsService, SiteSettings } from '../lib/cms';
 
 interface Props {
   title?: string;
   description?: string;
   /** og:type, e.g. 'article' for blog posts */
   ogType?: string;
+  /** CMS data forwarded to the global consultation modal */
+  settings?: SiteSettings;
+  services?: CmsService[];
 }
 
 const {
   title = `Адвокат в Ужгороді — ${site.name}`,
   description = site.description,
   ogType = 'website',
+  settings,
+  services,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -79,7 +87,8 @@ const jsonLd = {
   <body>
     <Fragment set:html={emblemDefs} />
     <slot />
-    <ConsultModal />
+    <ConsultModal services={services} phone={settings?.phone} />
+    <Analytics />
 
     <script>
       // Scroll reveal

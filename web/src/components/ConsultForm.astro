@@ -1,6 +1,6 @@
 ---
-import { site } from '../data/site';
-import { services } from '../data/services';
+import { site as fallback } from '../data/site';
+import { services as fallbackServices } from '../data/services';
 
 /**
  * Consultation request form. Used in the contact section and in the global
@@ -9,11 +9,17 @@ import { services } from '../data/services';
  */
 interface Props {
   idPrefix: string;
+  services?: { id: string; title: string }[];
+  phone?: string;
 }
-const { idPrefix } = Astro.props;
+const {
+  idPrefix,
+  services = fallbackServices,
+  phone = fallback.phone,
+} = Astro.props;
 ---
 
-<form class="consult-form" data-phone={site.phone} novalidate>
+<form class="consult-form" data-phone={phone} novalidate>
   <div class="grid gap-6 sm:grid-cols-2">
     <div>
       <label for={`${idPrefix}-name`} class="mb-2 block text-sm font-bold text-ink-900">
@@ -144,6 +150,19 @@ const { idPrefix } = Astro.props;
         form.reset();
         status.textContent = 'Запит надіслано. Ми звʼяжемося з вами найближчим часом.';
         status.className = 'form-status mt-4 text-sm font-semibold text-green-700';
+        // Conversion event: Zaraz (edge tag manager) or in-page GA4/Pixel — whichever is active
+        const w = window as unknown as {
+          zaraz?: { track: (e: string) => void };
+          gtag?: (...args: unknown[]) => void;
+          fbq?: (...args: unknown[]) => void;
+        };
+        try {
+          w.zaraz?.track('lead');
+          w.gtag?.('event', 'generate_lead');
+          w.fbq?.('track', 'Lead');
+        } catch {
+          /* analytics must never break the form */
+        }
       } catch {
         status.textContent = `Не вдалося надіслати запит. Зателефонуйте нам: ${form.dataset.phone}`;
         status.className = 'form-status mt-4 text-sm font-semibold text-red-600';
