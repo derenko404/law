@@ -1,0 +1,63 @@
+---
+import Emblem from './Emblem.astro';
+import { site, stats } from '../data/site';
+---
+
+<section id="top" class="relative overflow-hidden bg-ink-950 pt-20">
+  <!-- Watermark emblem -->
+  <div class="pointer-events-none absolute -right-40 top-1/2 -translate-y-1/2 text-gold-500/[0.07]">
+    <Emblem class="h-[46rem] w-[46rem]" />
+  </div>
+
+  <!-- Deed frame: double gold hairline inset, like an official legal blank -->
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <div class="relative border border-gold-500/40 p-1.5">
+      <div class="border border-gold-500/25 px-6 py-20 sm:px-12 md:py-28 lg:px-20">
+        <div class="relative max-w-3xl">
+          <p class="mb-5 text-xs font-bold tracking-[0.35em] text-gold-400 uppercase">
+            Адвокатське бюро · {site.city}
+          </p>
+          <h1 class="display text-5xl leading-[1.08] text-white sm:text-6xl lg:text-7xl">
+            Юридичний захист ваших прав та інтересів
+          </h1>
+          <p class="mt-7 max-w-xl text-lg leading-relaxed text-white/70">
+            Адвокат {site.lawyer} — 21 рік юридичної практики, колишній працівник
+            прокуратури. Кримінальні, цивільні, адміністративні, митні та сімейні справи в
+            Ужгороді й по всій Україні.
+          </p>
+          <div class="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+            <a
+              href="/#contact"
+              data-consult
+              class="rounded-sm bg-gold-500 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-ink-950 uppercase transition-colors hover:bg-gold-400"
+            >
+              Отримати консультацію
+            </a>
+            <a
+              href={site.phoneHref}
+              class="rounded-sm border border-gold-500/50 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-gold-200 uppercase transition-colors hover:border-gold-400 hover:text-gold-400"
+            >
+              {site.phone}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats band -->
+  <div class="border-t border-gold-500/20 bg-ink-900">
+    <dl class="mx-auto grid max-w-7xl grid-cols-2 divide-gold-500/15 px-4 sm:px-6 lg:grid-cols-4 lg:divide-x">
+      {
+        stats.map((s) => (
+          <div class="px-6 py-10 text-center">
+            <dd class="display text-4xl text-gold-400 md:text-5xl">
+              <span data-count={s.value}>0</span>{s.suffix}
+            </dd>
+            <dt class="mt-2 text-sm text-white/60">{s.label}</dt>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

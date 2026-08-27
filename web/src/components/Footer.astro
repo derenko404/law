@@ -1,0 +1,63 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-gold-500/20 bg-ink-950 py-14">
+  <div class="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-3">
+    <div>
+      <Logo tone="light" />
+      <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+        Якісні юридичні послуги в Ужгороді з гарантією професійності та
+        конфіденційності.
+      </p>
+    </div>
+
+    <nav class="text-sm" aria-label="Карта сайту">
+      <p class="mb-4 text-xs font-bold tracking-[0.3em] text-gold-400 uppercase">Карта сайту</p>
+      <ul class="space-y-2">
+        <li><a href="/#services" class="text-white/70 transition-colors hover:text-gold-400">Послуги</a></li>
+        <li><a href="/#about" class="text-white/70 transition-colors hover:text-gold-400">Про адвоката</a></li>
+        <li><a href="/cases" class="text-white/70 transition-colors hover:text-gold-400">Виграні справи</a></li>
+        <li><a href="/articles" class="text-white/70 transition-colors hover:text-gold-400">Статті</a></li>
+        <li><a href="/#testimonials" class="text-white/70 transition-colors hover:text-gold-400">Відгуки</a></li>
+        <li><a href="/#contact" class="text-white/70 transition-colors hover:text-gold-400">Контакти</a></li>
+      </ul>
+    </nav>
+
+    <div class="text-sm">
+      <p class="mb-4 text-xs font-bold tracking-[0.3em] text-gold-400 uppercase">Контакти</p>
+      <ul class="space-y-2 text-white/70">
+        <li>
+          <a href={site.mapUrl} target="_blank" rel="noopener" class="transition-colors hover:text-gold-400">
+            {site.address}
+          </a>
+        </li>
+        <li><a href={site.phoneHref} class="font-bold text-white transition-colors hover:text-gold-400">{site.phone}</a></li>
+        <li><a href={`mailto:${site.email}`} class="transition-colors hover:text-gold-400">{site.email}</a></li>
+        <li>
+          <a href={site.mapUrl} target="_blank" rel="noopener" class="text-gold-200 underline-offset-4 transition-colors hover:text-gold-400 hover:underline">
+            Показати на карті
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mx-auto mt-12 max-w-7xl border-t border-white/10 px-4 pt-6 text-xs text-white/40 sm:px-6">
+    © {year} {site.name}. Всі права захищені.
+  </div>
+</footer>
+
+<!-- Floating call button -->
+<a
+  href={site.phoneHref}
+  aria-label="Зателефонувати"
+  class="fab-call fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gold-500 text-ink-950 shadow-lg transition-colors hover:bg-gold-400"
+>
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"></path>
+  </svg>
+</a>

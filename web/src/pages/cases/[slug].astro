@@ -1,0 +1,65 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import PageHero from '../../components/PageHero.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Base title={`${entry.data.title} — АБ «Марина В.Г. Юридичний захист»`} description={entry.data.description}>
+  <Header />
+  <main>
+    <PageHero eyebrow={entry.data.category} title={entry.data.title} />
+
+    <article class="bg-white py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-8 flex items-center gap-2 text-sm font-bold text-ink-900">
+          <svg class="h-5 w-5 text-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M4 12l5 5L20 7" />
+          </svg>
+          Результат: {entry.data.result}
+        </p>
+        <div
+          class="prose prose-slate max-w-none prose-headings:font-(family-name:--font-display) prose-headings:font-normal prose-headings:tracking-wide prose-a:text-gold-500"
+        >
+          <Content />
+        </div>
+
+        <div class="mt-12 border-t-2 border-gold-500 bg-porcelain p-8 text-center">
+          <h2 class="display text-2xl text-ink-900">Схожа ситуація?</h2>
+          <p class="mx-auto mt-2 max-w-md text-sm text-muted">
+            Кожна справа індивідуальна — обговоримо вашу та оцінимо перспективи.
+          </p>
+          <a
+            href="/#contact"
+            data-consult
+            class="mt-6 inline-block rounded-sm bg-gold-500 px-8 py-4 text-sm font-bold tracking-wide text-ink-950 uppercase transition-colors hover:bg-gold-400"
+          >
+            Отримати консультацію
+          </a>
+        </div>
+
+        <p class="mt-10">
+          <a href="/cases" class="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-gold-500 uppercase">
+            <svg class="h-3.5 w-3.5 rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M2 8h11M9 4l4 4-4 4" />
+            </svg>
+            Всі справи
+          </a>
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Base>

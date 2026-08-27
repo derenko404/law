@@ -1,0 +1,26 @@
+---
+import Emblem from './Emblem.astro';
+
+/** Slim dark hero for inner pages (articles, cases). */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+}
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-ink-950 pt-20">
+  <div class="pointer-events-none absolute -right-32 top-1/2 -translate-y-1/2 text-gold-500/[0.07]">
+    <Emblem class="h-[28rem] w-[28rem]" />
+  </div>
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <div class="border border-gold-500/40 p-1.5">
+      <div class="border border-gold-500/25 px-6 py-14 sm:px-12">
+        <p class="mb-4 text-xs font-bold tracking-[0.35em] text-gold-400 uppercase">{eyebrow}</p>
+        <h1 class="display max-w-3xl text-4xl leading-tight text-white sm:text-5xl">{title}</h1>
+        {lead && <p class="mt-5 max-w-2xl leading-relaxed text-white/70">{lead}</p>}
+      </div>
+    </div>
+  </div>
+</section>

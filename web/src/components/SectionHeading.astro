@@ -1,0 +1,40 @@
+---
+import Emblem from './Emblem.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  /** 'light' for dark backgrounds */
+  tone?: 'dark' | 'light';
+}
+const { eyebrow, title, tone = 'dark' } = Astro.props;
+---
+
+<div class="reveal mx-auto mb-14 max-w-2xl text-center">
+  <p
+    class:list={[
+      'mb-3 text-xs font-bold tracking-[0.3em] uppercase',
+      tone === 'dark' ? 'text-gold-500' : 'text-gold-200',
+    ]}
+  >
+    {eyebrow}
+  </p>
+  <h2
+    class:list={[
+      'display text-4xl md:text-5xl',
+      tone === 'dark' ? 'text-ink-900' : 'text-white',
+    ]}
+  >
+    {title}
+  </h2>
+  <div
+    class:list={[
+      'mt-5 flex items-center justify-center gap-3',
+      tone === 'dark' ? 'text-gold-500' : 'text-gold-200',
+    ]}
+  >
+    <span class="h-px w-16 bg-current opacity-60"></span>
+    <Emblem class="h-5 w-5" />
+    <span class="h-px w-16 bg-current opacity-60"></span>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import PageHero from '../../components/PageHero.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+const fmt = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.data.title,
+  description: article.data.description,
+  datePublished: article.data.pubDate.toISOString(),
+  inLanguage: 'uk',
+  author: { '@type': 'Person', name: 'Марина Віктор Георгійович' },
+  publisher: { '@type': 'LegalService', name: 'АБ «Марина В.Г. Юридичний захист»' },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+};
+---
+
+<Base
+  title={`${article.data.title} — АБ «Марина В.Г. Юридичний захист»`}
+  description={article.data.description}
+  ogType="article"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+  <Header />
+  <main>
+    <PageHero eyebrow={article.data.category ?? 'Стаття'} title={article.data.title} />
+
+    <article class="bg-white py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-8 text-sm font-bold tracking-wide text-muted uppercase">
+          <time datetime={article.data.pubDate.toISOString()}>{fmt.format(article.data.pubDate)}</time>
+        </p>
+        <div
+          class="prose prose-slate max-w-none prose-headings:font-(family-name:--font-display) prose-headings:font-normal prose-headings:tracking-wide prose-a:text-gold-500"
+        >
+          <Content />
+        </div>
+
+        <div class="mt-12 border-t-2 border-gold-500 bg-porcelain p-8 text-center">
+          <h2 class="display text-2xl text-ink-900">Потрібна допомога у схожій ситуації?</h2>
+          <p class="mx-auto mt-2 max-w-md text-sm text-muted">
+            Опишіть свою проблему — і ми запропонуємо план дій.
+          </p>
+          <a
+            href="/#contact"
+            data-consult
+            class="mt-6 inline-block rounded-sm bg-gold-500 px-8 py-4 text-sm font-bold tracking-wide text-ink-950 uppercase transition-colors hover:bg-gold-400"
+          >
+            Отримати консультацію
+          </a>
+        </div>
+
+        <p class="mt-10">
+          <a href="/articles" class="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-gold-500 uppercase">
+            <svg class="h-3.5 w-3.5 rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M2 8h11M9 4l4 4-4 4" />
+            </svg>
+            Всі статті
+          </a>
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Base>

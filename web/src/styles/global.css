@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Self-hosted fonts (no render-blocking Google Fonts request) */
+@import "@fontsource/forum/latin.css";
+@import "@fontsource/forum/cyrillic.css";
+@import "@fontsource-variable/manrope";
+
+@theme {
+  /* Brand palette — gold extracted from the bureau logo (#CC8800) */
+  --color-ink-950: #0b1220;
+  --color-ink-900: #111c31;
+  --color-ink-800: #1a2742;
+  --color-ink-700: #263454;
+  --color-gold-500: #cc8800;
+  --color-gold-400: #e0a62d;
+  --color-gold-200: #efd9a7;
+  --color-porcelain: #f3f5f8;
+  --color-body: #2b3648;
+  --color-muted: #5c6779;
+
+  --font-display: "Forum", "Georgia", serif;
+  --font-sans: "Manrope Variable", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-body);
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Classical display headings */
+.display {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+/* Scroll-reveal (disabled for reduced motion) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Floating call button pulse */
+.fab-call::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--color-gold-500);
+  animation: fab-pulse 2.4s ease-out infinite;
+  z-index: -1;
+}
+
+@keyframes fab-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-call::before {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Visible keyboard focus */
+:focus-visible {
+  outline: 2px solid var(--color-gold-400);
+  outline-offset: 2px;
+}

@@ -1,0 +1,100 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../data/site';
+
+const nav = [
+  { href: '/#services', label: 'Послуги' },
+  { href: '/#about', label: 'Про адвоката' },
+  { href: '/cases', label: 'Виграні справи' },
+  { href: '/articles', label: 'Статті' },
+  { href: '/#contact', label: 'Контакти' },
+];
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-gold-500/25 bg-ink-950/95 backdrop-blur">
+  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6">
+    <Logo tone="light" />
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Основна навігація">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class="text-sm font-semibold text-white/80 transition-colors hover:text-gold-400"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <a
+        href={site.phoneHref}
+        class="hidden items-center gap-2 text-sm font-bold text-gold-200 transition-colors hover:text-gold-400 md:flex"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"
+          ></path>
+        </svg>
+        {site.phone}
+      </a>
+      <a
+        href="/#contact"
+        data-consult
+        class="hidden rounded-sm bg-gold-500 px-5 py-2.5 text-sm font-bold text-ink-950 transition-colors hover:bg-gold-400 sm:block"
+      >
+        Отримати консультацію
+      </a>
+      <button
+        id="menu-toggle"
+        class="flex h-10 w-10 items-center justify-center text-white lg:hidden"
+        aria-label="Меню"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-gold-500/25 bg-ink-950 lg:hidden">
+    <nav class="flex flex-col px-6 py-4" aria-label="Мобільна навігація">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class="border-b border-white/5 py-3 text-sm font-semibold text-white/85 last:border-0"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a
+        href="/#contact"
+        data-consult
+        class="mt-4 rounded-sm bg-gold-500 px-5 py-3 text-center text-sm font-bold text-ink-950"
+      >
+        Отримати консультацію
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }),
+  );
+</script>

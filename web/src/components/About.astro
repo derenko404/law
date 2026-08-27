@@ -1,0 +1,58 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import Emblem from './Emblem.astro';
+import { site } from '../data/site';
+import { credentials, values } from '../data/content';
+---
+
+<section id="about" class="bg-white py-24">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <SectionHeading eyebrow="Про адвоката" title={site.lawyer} />
+
+    <div class="grid gap-10 lg:grid-cols-5">
+      <!-- Credentials panel -->
+      <div class="reveal relative overflow-hidden bg-ink-950 p-10 lg:col-span-2">
+        <div class="pointer-events-none absolute -bottom-16 -right-16 text-gold-500/10">
+          <Emblem class="h-72 w-72" />
+        </div>
+        <Emblem class="h-14 w-14 text-gold-500" />
+        <h3 class="display mt-6 text-3xl text-white">Керівник бюро</h3>
+        <ul class="mt-8 space-y-6">
+          {
+            credentials.map((c) => (
+              <li class="flex gap-4 text-sm leading-relaxed text-white/75">
+                <span class="mt-2 h-px w-8 shrink-0 bg-gold-500" />
+                {c}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Story + values -->
+      <div class="reveal lg:col-span-3">
+        <p class="text-lg leading-relaxed text-body">
+          Адвокатське бюро «Марина В.Г. Юридичний захист» працює в Ужгороді з 2015 року.
+          Надаємо професійну юридичну допомогу фізичним особам та бізнесу — від
+          консультації до представництва в судах усіх інстанцій.
+        </p>
+        <p class="mt-4 leading-relaxed text-muted">
+          Досвід роботи в прокуратурі Закарпатської області дозволяє бачити справу з обох
+          сторін процесу та будувати захист, який працює. Кожну справу вивчаємо особисто,
+          пояснюємо ситуацію зрозумілою мовою та чесно оцінюємо перспективи.
+        </p>
+
+        <div class="mt-10 grid gap-5 sm:grid-cols-2">
+          {
+            values.map((v) => (
+              <div class="border-l-2 border-gold-500 bg-porcelain p-6">
+                <h4 class="display text-xl text-ink-900">{v.title}</h4>
+                <p class="mt-2 text-sm leading-relaxed text-muted">{v.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
