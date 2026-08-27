@@ -10,6 +10,10 @@ export default defineConfig({
   site: 'https://advokat-uzhgorod.com.ua',
   adapter: cloudflare(),
 
+  build: {
+    inlineStylesheets: 'always',
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },
