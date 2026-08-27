@@ -6,8 +6,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Current production domain; swap when the lawyer's own domain moves over
-  site: 'https://derenko.online',
+  // Canonical origin for SEO (canonical/og/sitemap URLs).
+  // Override per-deployment with the SITE_URL build variable.
+  site: process.env.SITE_URL ?? 'https://law.misha299235.workers.dev',
   adapter: cloudflare(),
 
   build: {

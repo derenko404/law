@@ -2,27 +2,29 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
 import { Articles } from './collections/Articles'
 import { Cases } from './collections/Cases'
+import { Leads } from './collections/Leads'
+import { Media } from './collections/Media'
 import { Services } from './collections/Services'
 import { Testimonials } from './collections/Testimonials'
-import { Leads } from './collections/Leads'
+import { Users } from './collections/Users'
 import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// Origins allowed for CORS/CSRF: the website + the CMS admin panel itself.
+// Origins allowed for CORS/CSRF: the website(s) + the CMS admin panel itself.
+// ALLOWED_ORIGINS: comma-separated, e.g. "https://law.xxx.workers.dev,https://example.com"
 const allowedOrigins = [
-  'https://derenko.online',
-  'https://law.vasya-derenko.workers.dev',
   'http://localhost:4321',
   'http://localhost:3000',
+  ...(process.env.ALLOWED_ORIGINS?.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean) ?? []),
   ...(process.env.PAYLOAD_PUBLIC_SERVER_URL ? [process.env.PAYLOAD_PUBLIC_SERVER_URL] : []),
 ]
 
