@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     articles: Article;
     cases: Case;
+    categories: Category;
     services: Service;
     testimonials: Testimonial;
     leads: Lead;
@@ -83,6 +84,7 @@ export interface Config {
   collectionsSelect: {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     cases: CasesSelect<false> | CasesSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
@@ -139,11 +141,11 @@ export interface Article {
   id: number;
   title: string;
   /**
-   * Латиницею, через дефіс: rozluchennya-z-chogo-pochaty
+   * Залиште порожнім — згенерується із заголовка (rozluchennya-z-chogo-pochaty)
    */
   slug: string;
   description: string;
-  category?: string | null;
+  category?: (number | null) | Category;
   publishedAt: string;
   content: {
     root: {
@@ -166,14 +168,32 @@ export interface Article {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  title: string;
+  /**
+   * Залиште порожнім — згенерується з назви (mytni-spravy). Використовується у посиланнях фільтра.
+   */
+  slug: string;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "cases".
  */
 export interface Case {
   id: number;
   title: string;
+  /**
+   * Залиште порожнім — згенерується з назви
+   */
   slug: string;
   description: string;
-  category: string;
+  category: number | Category;
   result: string;
   publishedAt: string;
   content: {
@@ -203,7 +223,7 @@ export interface Service {
   id: number;
   title: string;
   /**
-   * Латиницею, використовується у формі: criminal, family…
+   * Залиште порожнім — згенерується з назви. Використовується у формі: criminal, family…
    */
   serviceId: string;
   icon: 'shield' | 'gavel' | 'scale' | 'family' | 'customs' | 'land' | 'briefcase' | 'contract';
@@ -330,6 +350,10 @@ export interface PayloadLockedDocument {
         value: number | Case;
       } | null)
     | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
         relationTo: 'services';
         value: number | Service;
       } | null)
@@ -421,6 +445,17 @@ export interface CasesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -17,80 +17,103 @@ const {
   services = fallbackServices,
   phone = fallback.phone,
 } = Astro.props;
+
+const inputClass =
+  'w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500 aria-invalid:border-red-500';
 ---
 
 <form class="consult-form" data-phone={phone} novalidate>
-  <div class="grid gap-6 sm:grid-cols-2">
-    <div>
-      <label for={`${idPrefix}-name`} class="mb-2 block text-sm font-bold text-ink-900">
-        Імʼя <span class="text-gold-500">*</span>
-      </label>
-      <input
-        id={`${idPrefix}-name`}
-        name="name"
-        type="text"
-        required
-        autocomplete="name"
-        placeholder="Ваше імʼя"
-        class="w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500"
-      />
+  <div class="form-fields">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label for={`${idPrefix}-name`} class="mb-2 block text-sm font-bold text-ink-900">
+          Імʼя <span class="text-gold-500">*</span>
+        </label>
+        <input
+          id={`${idPrefix}-name`}
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          placeholder="Ваше імʼя"
+          class={inputClass}
+        />
+        <p class="field-error mt-2 hidden text-xs font-semibold text-red-600" id={`${idPrefix}-name-error`}></p>
+      </div>
+      <div>
+        <label for={`${idPrefix}-phone`} class="mb-2 block text-sm font-bold text-ink-900">
+          Номер телефону <span class="text-gold-500">*</span>
+        </label>
+        <input
+          id={`${idPrefix}-phone`}
+          name="phone"
+          type="tel"
+          required
+          autocomplete="tel"
+          placeholder="+38 (0__) ___-__-__"
+          class={`field-phone ${inputClass}`}
+        />
+        <p class="field-error mt-2 hidden text-xs font-semibold text-red-600" id={`${idPrefix}-phone-error`}></p>
+      </div>
     </div>
-    <div>
-      <label for={`${idPrefix}-phone`} class="mb-2 block text-sm font-bold text-ink-900">
-        Номер телефону <span class="text-gold-500">*</span>
-      </label>
-      <input
-        id={`${idPrefix}-phone`}
-        name="phone"
-        type="tel"
-        required
-        autocomplete="tel"
-        placeholder="+38 (0__) ___-__-__"
-        class="field-phone w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500"
-      />
-    </div>
-  </div>
 
-  <div class="mt-6">
-    <label for={`${idPrefix}-service`} class="mb-2 block text-sm font-bold text-ink-900">
-      Тип питання
-    </label>
-    <select
-      id={`${idPrefix}-service`}
-      name="service"
-      class="field-service w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body focus:border-gold-500"
+    <div class="mt-6">
+      <label for={`${idPrefix}-service`} class="mb-2 block text-sm font-bold text-ink-900">
+        Тип питання
+      </label>
+      <select
+        id={`${idPrefix}-service`}
+        name="service"
+        class="field-service w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body focus:border-gold-500"
+      >
+        <option value="">Оберіть напрямок</option>
+        {services.map((s) => <option value={s.id}>{s.title}</option>)}
+        <option value="other">Інше</option>
+      </select>
+    </div>
+
+    <div class="mt-6">
+      <label for={`${idPrefix}-message`} class="mb-2 block text-sm font-bold text-ink-900">
+        Опис проблеми
+      </label>
+      <textarea
+        id={`${idPrefix}-message`}
+        name="message"
+        rows="4"
+        placeholder="Коротко опишіть вашу ситуацію…"
+        class="w-full resize-y border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500"></textarea>
+    </div>
+
+    <p class="mt-4 text-xs leading-relaxed text-muted">
+      Натискаючи «Надіслати запит», ви даєте згоду на обробку персональних даних для звʼязку з
+      вами щодо консультації.
+    </p>
+
+    <button
+      type="submit"
+      class="mt-6 w-full rounded-sm bg-gold-500 px-8 py-4 text-sm font-bold tracking-wide text-ink-950 uppercase transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 sm:w-auto"
     >
-      <option value="">Оберіть напрямок</option>
-      {services.map((s) => <option value={s.id}>{s.title}</option>)}
-      <option value="other">Інше</option>
-    </select>
+      Надіслати запит
+    </button>
+
+    <p class="form-status mt-4 hidden text-sm font-semibold" role="status"></p>
   </div>
 
-  <div class="mt-6">
-    <label for={`${idPrefix}-message`} class="mb-2 block text-sm font-bold text-ink-900">
-      Опис проблеми
-    </label>
-    <textarea
-      id={`${idPrefix}-message`}
-      name="message"
-      rows="4"
-      placeholder="Коротко опишіть вашу ситуацію…"
-      class="w-full resize-y border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500"></textarea>
+  <div class="form-success hidden py-8 text-center" role="status" aria-live="polite">
+    <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-gold-500/40 text-gold-500">
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path d="M4 12.5l5 5L20 6.5" />
+      </svg>
+    </span>
+    <h3 class="display mt-5 text-2xl text-ink-900">Запит надіслано</h3>
+    <p class="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">
+      Дякуємо за звернення. Ми звʼяжемось з вами найближчим часом.
+    </p>
+    <p class="mt-5 text-xs text-muted">
+      Термінове питання?{' '}
+      <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} class="ml-1 font-bold whitespace-nowrap text-gold-500 transition-colors hover:text-gold-400">{phone}</a>
+    </p>
   </div>
-
-  <p class="mt-4 text-xs leading-relaxed text-muted">
-    Натискаючи «Надіслати запит», ви даєте згоду на обробку персональних даних для звʼязку з
-    вами щодо консультації.
-  </p>
-
-  <button
-    type="submit"
-    class="mt-6 w-full rounded-sm bg-gold-500 px-8 py-4 text-sm font-bold tracking-wide text-ink-950 uppercase transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 sm:w-auto"
-  >
-    Надіслати запит
-  </button>
-
-  <p class="form-status mt-4 hidden text-sm font-semibold" role="status"></p>
 </form>
 
 <script>
@@ -116,25 +139,62 @@ const {
     );
   });
 
+  // ---- Per-field validation ----
+  const errorOf = (input: HTMLElement) =>
+    input.parentElement?.querySelector<HTMLElement>('.field-error') ?? null;
+
+  const setFieldError = (input: HTMLInputElement, message: string) => {
+    input.setAttribute('aria-invalid', 'true');
+    const error = errorOf(input);
+    if (error) {
+      error.textContent = message;
+      error.classList.remove('hidden');
+      input.setAttribute('aria-describedby', error.id);
+    }
+  };
+
+  const clearFieldError = (input: HTMLInputElement) => {
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+    errorOf(input)?.classList.add('hidden');
+  };
+
+  const validate = (form: HTMLFormElement): boolean => {
+    const name = form.querySelector<HTMLInputElement>('input[name="name"]')!;
+    const phone = form.querySelector<HTMLInputElement>('input[name="phone"]')!;
+    let firstInvalid: HTMLInputElement | null = null;
+
+    if (!name.value.trim()) {
+      setFieldError(name, 'Вкажіть ваше імʼя.');
+      firstInvalid = name;
+    }
+    if (!phone.value.trim()) {
+      setFieldError(phone, 'Вкажіть номер телефону.');
+      firstInvalid ??= phone;
+    } else if (phone.value.replace(/\D/g, '').length !== 12) {
+      setFieldError(phone, 'Вкажіть повний номер: +38 (0XX) XXX-XX-XX.');
+      firstInvalid ??= phone;
+    }
+
+    firstInvalid?.focus();
+    return !firstInvalid;
+  };
+
   // ---- Submit ----
   document.querySelectorAll<HTMLFormElement>('.consult-form').forEach((form) => {
     const status = form.querySelector<HTMLElement>('.form-status');
+
+    // Errors disappear as soon as the visitor starts fixing the field
+    form.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+      input.addEventListener('input', () => clearFieldError(input));
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!status) return;
+      if (!validate(form)) return;
 
       const data = Object.fromEntries(new FormData(form).entries());
-      if (!String(data.name).trim() || !String(data.phone).trim()) {
-        status.textContent = 'Вкажіть імʼя та номер телефону.';
-        status.className = 'form-status mt-4 text-sm font-semibold text-red-600';
-        return;
-      }
-      if (String(data.phone).replace(/\D/g, '').length !== 12) {
-        status.textContent = 'Вкажіть повний номер телефону: +38 (0XX) XXX-XX-XX.';
-        status.className = 'form-status mt-4 text-sm font-semibold text-red-600';
-        return;
-      }
-
       const button = form.querySelector('button[type="submit"]');
       button?.setAttribute('disabled', '');
       status.className = 'form-status mt-4 text-sm font-semibold text-muted';
@@ -148,8 +208,9 @@ const {
         });
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
-        status.textContent = 'Запит надіслано. Ми звʼяжемося з вами найближчим часом.';
-        status.className = 'form-status mt-4 text-sm font-semibold text-green-700';
+        status.classList.add('hidden');
+        form.querySelector('.form-fields')?.classList.add('hidden');
+        form.querySelector('.form-success')?.classList.remove('hidden');
         // Conversion event: Zaraz (edge tag manager) or in-page GA4/Pixel — whichever is active
         const w = window as unknown as {
           zaraz?: { track: (e: string) => void };

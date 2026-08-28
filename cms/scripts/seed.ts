@@ -49,6 +49,13 @@ if (users.totalDocs === 0) {
   console.log('created admin user admin@derenko.online / change-me-on-railway (CHANGE IT)')
 }
 
+// ---- Categories (created by the categories migration) ----
+const categoryIds: Record<string, number> = {}
+{
+  const { docs } = await payload.find({ collection: 'categories', limit: 100 })
+  for (const d of docs) categoryIds[d.title] = Number(d.id)
+}
+
 // ---- Articles ----
 if ((await payload.find({ collection: 'articles', limit: 1 })).totalDocs === 0) {
   for (const f of readdirSync(`${WEB_CONTENT}/articles`)) {
@@ -59,7 +66,7 @@ if ((await payload.find({ collection: 'articles', limit: 1 })).totalDocs === 0) 
         title: data.title,
         slug: f.replace(/\.md$/, ''),
         description: data.description,
-        category: data.category,
+        category: categoryIds[data.category],
         publishedAt: new Date(data.pubDate).toISOString(),
         content: md(body),
         _status: 'published',
@@ -79,7 +86,7 @@ if ((await payload.find({ collection: 'cases', limit: 1 })).totalDocs === 0) {
         title: data.title,
         slug: f.replace(/\.md$/, ''),
         description: data.description,
-        category: data.category,
+        category: categoryIds[data.category],
         result: data.result,
         publishedAt: new Date(data.pubDate).toISOString(),
         content: md(body),

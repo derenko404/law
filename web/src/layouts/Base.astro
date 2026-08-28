@@ -9,6 +9,8 @@ import type { CmsService, SiteSettings } from '../lib/cms';
 interface Props {
   title?: string;
   description?: string;
+  /** Comma-separated SEO keywords; pages can extend or override the default set */
+  keywords?: string;
   /** og:type, e.g. 'article' for blog posts */
   ogType?: string;
   /** CMS data forwarded to the global consultation modal */
@@ -19,6 +21,7 @@ interface Props {
 const {
   title = `Адвокат в Ужгороді — ${site.name}`,
   description = site.description,
+  keywords = 'адвокат, Ужгород, юридична консультація, митні справи, кримінальні справи, цілодобовий адвокат, адвокат Ужгород',
   ogType = 'website',
   settings,
   services,
@@ -53,6 +56,7 @@ const jsonLd = {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <link rel="canonical" href={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { slugFrom } from '../lib/slug'
+
 export const Services: CollectionConfig = {
   slug: 'services',
   labels: {
@@ -21,9 +23,10 @@ export const Services: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      hooks: { beforeValidate: [slugFrom('title')] },
       admin: {
         position: 'sidebar',
-        description: 'Латиницею, використовується у формі: criminal, family…',
+        description: 'Залиште порожнім — згенерується з назви. Використовується у формі: criminal, family…',
       },
     },
     {

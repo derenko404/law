@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { slugFrom } from '../lib/slug'
+
 export const Cases: CollectionConfig = {
   slug: 'cases',
   labels: {
@@ -28,7 +30,8 @@ export const Cases: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
-      admin: { position: 'sidebar' },
+      hooks: { beforeValidate: [slugFrom('title')] },
+      admin: { position: 'sidebar', description: 'Залиште порожнім — згенерується з назви' },
     },
     {
       name: 'description',
@@ -37,7 +40,14 @@ export const Cases: CollectionConfig = {
       required: true,
       maxLength: 300,
     },
-    { name: 'category', label: 'Категорія', type: 'text', required: true },
+    {
+      name: 'category',
+      label: 'Категорія',
+      type: 'relationship',
+      relationTo: 'categories',
+      required: true,
+      admin: { position: 'sidebar' },
+    },
     { name: 'result', label: 'Результат', type: 'text', required: true },
     {
       name: 'publishedAt',

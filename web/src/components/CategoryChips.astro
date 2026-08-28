@@ -1,0 +1,41 @@
+---
+import type { CmsCategory } from '../lib/cms';
+
+/** Category filter chips for collection listings. */
+interface Props {
+  categories: CmsCategory[];
+  /** Slug of the currently active category. */
+  active?: string;
+  /** Base path of the listing, e.g. '/articles' */
+  base: string;
+}
+const { categories, active, base } = Astro.props;
+
+const chipClass = (isActive: boolean) =>
+  isActive
+    ? 'bg-gold-500 text-ink-950'
+    : 'border border-ink-700/20 bg-white text-body hover:border-gold-500 hover:text-gold-500';
+---
+
+{
+  categories.length > 0 && (
+    <nav class="mx-auto mb-4 flex max-w-7xl flex-wrap gap-2 px-4 sm:px-6" aria-label="Категорії">
+      <a
+        href={base}
+        class={`px-4 py-2 text-xs font-bold tracking-wide uppercase transition-colors ${chipClass(!active)}`}
+        aria-current={!active ? 'page' : undefined}
+      >
+        Всі
+      </a>
+      {categories.map((c) => (
+        <a
+          href={`${base}?category=${c.slug}`}
+          class={`px-4 py-2 text-xs font-bold tracking-wide uppercase transition-colors ${chipClass(active === c.slug)}`}
+          aria-current={active === c.slug ? 'page' : undefined}
+        >
+          {c.title}
+        </a>
+      ))}
+    </nav>
+  )
+}

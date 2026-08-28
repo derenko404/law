@@ -3,8 +3,9 @@ import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import PageHero from '../../components/PageHero.astro';
 import Pagination from '../../components/Pagination.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
 import Footer from '../../components/Footer.astro';
-import { cmsEnv, getSettings, getServices, getCases } from '../../lib/cms';
+import { cmsEnv, getSettings, getServices, getCases, getCategories } from '../../lib/cms';
 
 export const prerender = false;
 
@@ -12,11 +13,15 @@ const pageParam = Astro.params.page;
 const pageNum = pageParam ? Number(pageParam) : 1;
 if (!Number.isInteger(pageNum) || pageNum < 1) return Astro.rewrite('/404');
 
+const activeCategory = Astro.url.searchParams.get('category') ?? undefined;
+const query = activeCategory ? `?category=${encodeURIComponent(activeCategory)}` : '';
+
 const env = cmsEnv();
-const [settings, services, result] = await Promise.all([
+const [settings, services, categories, result] = await Promise.all([
   getSettings(env),
   getServices(env),
-  getCases(env, pageNum),
+  getCategories(env),
+  getCases(env, pageNum, activeCategory),
 ]);
 if (result && pageNum > 1 && result.docs.length === 0) return Astro.rewrite('/404');
 // CMS unreachable: temporary condition — show an empty state, not a 404
@@ -27,8 +32,8 @@ const page = {
   currentPage: result?.page ?? 1,
   lastPage: result?.totalPages ?? 1,
   url: {
-    prev: result?.hasPrevPage ? (result.page === 2 ? '/cases' : `/cases/${result.page - 1}`) : undefined,
-    next: result?.hasNextPage ? `/cases/${result.page + 1}` : undefined,
+    prev: result?.hasPrevPage ? (result.page === 2 ? `/cases${query}` : `/cases/${result.page - 1}${query}`) : undefined,
+    next: result?.hasNextPage ? `/cases/${result.page + 1}${query}` : undefined,
   },
 };
 ---
@@ -48,11 +53,18 @@ const page = {
     />
 
     <section class="bg-porcelain py-20">
+      <CategoryChips categories={categories} active={activeCategory} base="/cases" />
       <div class="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 md:grid-cols-2 xl:grid-cols-3">
         {
           docs.map((c) => (
             <article class="reveal group flex flex-col border-t-2 border-gold-500 bg-white p-8 shadow-sm transition-shadow hover:shadow-lg">
-              <p class="mb-4 text-xs font-bold tracking-wide text-gold-500 uppercase">{c.category}</p>
+              {c.category && (
+                <p class="mb-4 text-xs font-bold tracking-wide uppercase">
+                  <a href={`/cases?category=${c.category.slug}`} class="text-gold-500 transition-colors hover:text-gold-400">
+                    {c.category.title}
+                  </a>
+                </p>
+              )}
               <h2 class="display text-2xl leading-snug text-ink-900">
                 <a href={`/cases/${c.slug}`} class="transition-colors group-hover:text-gold-500">
                   {c.title}
@@ -81,13 +93,14 @@ const page = {
       {
         docs.length === 0 && (
           <p class="mx-auto max-w-xl px-4 text-center text-muted">
-            Матеріали тимчасово недоступні. Оновіть сторінку за кілька хвилин або
-            зателефонуйте нам — контакти внизу сторінки.
+            {result
+              ? 'У цій категорії поки немає матеріалів.'
+              : 'Матеріали тимчасово недоступні. Оновіть сторінку за кілька хвилин або зателефонуйте нам — контакти внизу сторінки.'}
           </p>
         )
       }
       <div class="mx-auto max-w-7xl px-4 sm:px-6">
-        <Pagination page={page} base="/cases" />
+        <Pagination page={page} base="/cases" query={query} />
       </div>
 
       <div class="mx-auto mt-14 max-w-7xl px-4 text-center sm:px-6">

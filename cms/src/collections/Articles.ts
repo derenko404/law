@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { slugFrom } from '../lib/slug'
+
 export const Articles: CollectionConfig = {
   slug: 'articles',
   labels: {
@@ -28,7 +30,8 @@ export const Articles: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
-      admin: { position: 'sidebar', description: 'Латиницею, через дефіс: rozluchennya-z-chogo-pochaty' },
+      hooks: { beforeValidate: [slugFrom('title')] },
+      admin: { position: 'sidebar', description: 'Залиште порожнім — згенерується із заголовка (rozluchennya-z-chogo-pochaty)' },
     },
     {
       name: 'description',
@@ -37,7 +40,13 @@ export const Articles: CollectionConfig = {
       required: true,
       maxLength: 300,
     },
-    { name: 'category', label: 'Категорія', type: 'text' },
+    {
+      name: 'category',
+      label: 'Категорія',
+      type: 'relationship',
+      relationTo: 'categories',
+      admin: { position: 'sidebar' },
+    },
     {
       name: 'publishedAt',
       label: 'Дата публікації',

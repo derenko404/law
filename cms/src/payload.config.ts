@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 
 import { Articles } from './collections/Articles'
 import { Cases } from './collections/Cases'
+import { Categories } from './collections/Categories'
 import { Leads } from './collections/Leads'
 import { Media } from './collections/Media'
 import { Services } from './collections/Services'
@@ -35,7 +36,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Articles, Cases, Services, Testimonials, Leads, Media, Users],
+  collections: [Articles, Cases, Categories, Services, Testimonials, Leads, Media, Users],
   globals: [SiteSettings],
   cors: allowedOrigins,
   csrf: allowedOrigins,

@@ -8,10 +8,12 @@ interface Props {
   };
   /** Base path without trailing slash, e.g. '/articles' */
   base: string;
+  /** Query string appended to every page URL, e.g. '?category=mytni-spravy' */
+  query?: string;
 }
-const { page, base } = Astro.props;
+const { page, base, query = '' } = Astro.props;
 
-const pageUrl = (n: number) => (n === 1 ? base : `${base}/${n}`);
+const pageUrl = (n: number) => (n === 1 ? `${base}${query}` : `${base}/${n}${query}`);
 const pages = Array.from({ length: page.lastPage }, (_, i) => i + 1);
 ---
 

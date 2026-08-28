@@ -81,7 +81,9 @@ export async function getSettings(env: CmsEnv): Promise<SiteSettings> {
       address: fallbackSite.address,
       hours: fallbackSite.hours,
       mapUrl: fallbackSite.mapUrl,
-      socials: fallbackSocials.map((s) => ({ icon: s.icon, href: s.href })),
+      socials: fallbackSocials
+        .map((s) => ({ icon: s.icon, href: s.href }))
+        .filter((s) => s.href && s.href.trim() !== '' && s.href.trim() !== '#'),
       stats: fallbackStats.map((s) => ({ value: s.value, suffix: s.suffix, label: s.label })),
       extraAreas: [...fallbackExtraAreas],
     };
@@ -94,10 +96,10 @@ export async function getSettings(env: CmsEnv): Promise<SiteSettings> {
     address: String(doc.address),
     hours: String(doc.hours),
     mapUrl: String(doc.mapUrl),
-    socials: ((doc.socials as { icon: string; href: string }[]) ?? []).map((s) => ({
-      icon: s.icon,
-      href: s.href,
-    })),
+    // Networks without a link are hidden in the UI
+    socials: ((doc.socials as { icon: string; href: string }[]) ?? [])
+      .map((s) => ({ icon: s.icon, href: s.href }))
+      .filter((s) => s.href && s.href.trim() !== '' && s.href.trim() !== '#'),
     stats: ((doc.stats as { value: number; suffix?: string; label: string }[]) ?? []).map((s) => ({
       value: s.value,
       suffix: s.suffix ?? '+',
@@ -152,6 +154,11 @@ export async function getTestimonials(env: CmsEnv): Promise<CmsTestimonial[]> {
 
 // ---------- Articles & cases ----------
 
+export interface CmsCategory {
+  title: string;
+  slug: string;
+}
+
 export interface CmsEntryBase {
   slug: string;
   title: string;
@@ -160,12 +167,12 @@ export interface CmsEntryBase {
 }
 
 export interface CmsArticle extends CmsEntryBase {
-  category?: string;
+  category?: CmsCategory | null;
   content?: unknown;
 }
 
 export interface CmsCase extends CmsEntryBase {
-  category: string;
+  category?: CmsCategory | null;
   result: string;
   content?: unknown;
 }
@@ -180,8 +187,35 @@ export interface Paged<T> {
 
 const LIST_FIELDS = 'select[title]=true&select[slug]=true&select[description]=true&select[category]=true&select[result]=true&select[publishedAt]=true';
 
-export async function getArticles(env: CmsEnv, page = 1, limit = 9): Promise<Paged<CmsArticle> | null> {
-  return cmsGet(env, `/api/articles?limit=${limit}&page=${page}&sort=-publishedAt&${LIST_FIELDS}`);
+const categoryFilter = (slug?: string) =>
+  slug ? `&where[category.slug][equals]=${encodeURIComponent(slug)}` : '';
+
+/** Relationship values may arrive unpopulated (id) — keep only populated objects. */
+function normalizeCategory(doc: { category?: unknown }): void {
+  if (typeof doc.category !== 'object') doc.category = null;
+}
+
+/** All practice-area categories, in the admin-defined order. */
+export async function getCategories(env: CmsEnv): Promise<CmsCategory[]> {
+  const res = await cmsGet<{ docs: CmsCategory[] }>(
+    env,
+    '/api/categories?limit=100&sort=order&select[title]=true&select[slug]=true',
+  );
+  return (res?.docs ?? []).map((c) => ({ title: c.title, slug: c.slug }));
+}
+
+export async function getArticles(
+  env: CmsEnv,
+  page = 1,
+  category?: string,
+  limit = 9,
+): Promise<Paged<CmsArticle> | null> {
+  const res = await cmsGet<Paged<CmsArticle>>(
+    env,
+    `/api/articles?limit=${limit}&page=${page}&sort=-publishedAt&${LIST_FIELDS}${categoryFilter(category)}`,
+  );
+  res?.docs.forEach(normalizeCategory);
+  return res;
 }
 
 export async function getArticle(env: CmsEnv, slug: string): Promise<CmsArticle | null> {
@@ -189,11 +223,23 @@ export async function getArticle(env: CmsEnv, slug: string): Promise<CmsArticle 
     env,
     `/api/articles?where[slug][equals]=${encodeURIComponent(slug)}&limit=1`,
   );
-  return res?.docs?.[0] ?? null;
+  const doc = res?.docs?.[0] ?? null;
+  if (doc) normalizeCategory(doc);
+  return doc;
 }
 
-export async function getCases(env: CmsEnv, page = 1, limit = 9): Promise<Paged<CmsCase> | null> {
-  return cmsGet(env, `/api/cases?limit=${limit}&page=${page}&sort=-publishedAt&${LIST_FIELDS}`);
+export async function getCases(
+  env: CmsEnv,
+  page = 1,
+  category?: string,
+  limit = 9,
+): Promise<Paged<CmsCase> | null> {
+  const res = await cmsGet<Paged<CmsCase>>(
+    env,
+    `/api/cases?limit=${limit}&page=${page}&sort=-publishedAt&${LIST_FIELDS}${categoryFilter(category)}`,
+  );
+  res?.docs.forEach(normalizeCategory);
+  return res;
 }
 
 export async function getCase(env: CmsEnv, slug: string): Promise<CmsCase | null> {
@@ -201,7 +247,9 @@ export async function getCase(env: CmsEnv, slug: string): Promise<CmsCase | null
     env,
     `/api/cases?where[slug][equals]=${encodeURIComponent(slug)}&limit=1`,
   );
-  return res?.docs?.[0] ?? null;
+  const doc = res?.docs?.[0] ?? null;
+  if (doc) normalizeCategory(doc);
+  return doc;
 }
 
 // ---------- Leads ----------
