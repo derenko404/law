@@ -39,6 +39,26 @@ export const Leads: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeChange: [
+      // The website form submits the service id (criminal, customs…) —
+      // store the human-readable title so the admin list and Telegram
+      // notifications show «Кримінальні справи», not «criminal».
+      async ({ data, req, operation }) => {
+        if (operation !== 'create' || !data?.service) return data
+        if (data.service === 'other') {
+          data.service = 'Інше'
+          return data
+        }
+        const res = await req.payload.find({
+          collection: 'services',
+          where: { serviceId: { equals: data.service } },
+          limit: 1,
+        })
+        const title = res.docs[0]?.title
+        if (title) data.service = title
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc, operation }) => {
         if (operation !== 'create') return
