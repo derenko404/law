@@ -5,7 +5,7 @@ import PageHero from '../../components/PageHero.astro';
 import Pagination from '../../components/Pagination.astro';
 import CategoryChips from '../../components/CategoryChips.astro';
 import Footer from '../../components/Footer.astro';
-import { cmsEnv, getSettings, getServices, getArticles, getCategories } from '../../lib/cms';
+import { cmsEnv, getSettings, getArticles, getCategories } from '../../lib/cms';
 
 export const prerender = false;
 
@@ -17,9 +17,8 @@ const activeCategory = Astro.url.searchParams.get('category') ?? undefined;
 const query = activeCategory ? `?category=${encodeURIComponent(activeCategory)}` : '';
 
 const env = cmsEnv();
-const [settings, services, categories, result] = await Promise.all([
+const [settings, categories, result] = await Promise.all([
   getSettings(env),
-  getServices(env),
   getCategories(env),
   getArticles(env, pageNum, activeCategory),
 ]);
@@ -44,9 +43,8 @@ const fmt = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', ye
   title="Статті адвоката — АБ «Марина В.Г. Юридичний захист»"
   description="Практичні юридичні поради від адвоката в Ужгороді: митні справи, адміністративні штрафи, сімейні та кримінальні справи."
   settings={settings}
-  services={services}
 >
-  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
+  <Header settings={settings} />
   <main>
     <PageHero
       eyebrow="Блог"

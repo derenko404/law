@@ -14,8 +14,8 @@ Astro.response.status = 404;
 ---
 
 <Base title="Сторінку не знайдено — АБ «Марина В.Г. Юридичний захист»" settings={settings}>
-  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
-  <main class="flex min-h-[70vh] items-center justify-center bg-ink-950 pt-20">
+  <Header settings={settings} />
+  <main class="flex min-h-[70vh] items-center justify-center bg-ink-950 pt-26 sm:pt-30">
     <div class="px-4 py-24 text-center">
       <Emblem class="mx-auto h-20 w-20 text-gold-500/60" />
       <h1 class="display mt-8 text-6xl text-white">404</h1>

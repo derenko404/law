@@ -591,6 +591,8 @@ export interface SiteSetting {
   id: number;
   phone: string;
   phoneHref: string;
+  phone2?: string | null;
+  phone2Href?: string | null;
   email: string;
   address: string;
   hours: string;
@@ -626,6 +628,8 @@ export interface SiteSetting {
 export interface SiteSettingsSelect<T extends boolean = true> {
   phone?: T;
   phoneHref?: T;
+  phone2?: T;
+  phone2Href?: T;
   email?: T;
   address?: T;
   hours?: T;

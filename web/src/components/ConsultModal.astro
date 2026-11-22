@@ -2,10 +2,9 @@
 import ConsultForm from './ConsultForm.astro';
 
 interface Props {
-  services?: { id: string; title: string }[];
   phone?: string;
 }
-const { services, phone } = Astro.props;
+const { phone } = Astro.props;
 ---
 
 <dialog
@@ -28,6 +27,6 @@ const { services, phone } = Astro.props;
         </svg>
       </button>
     </div>
-    <ConsultForm idPrefix="modal" services={services} phone={phone} />
+    <ConsultForm idPrefix="modal" phone={phone} />
   </div>
 </dialog>

@@ -1,6 +1,5 @@
 ---
 import { site as fallback } from '../data/site';
-import { services as fallbackServices } from '../data/services';
 
 /**
  * Consultation request form. Used in the contact section and in the global
@@ -9,20 +8,15 @@ import { services as fallbackServices } from '../data/services';
  */
 interface Props {
   idPrefix: string;
-  services?: { id: string; title: string }[];
   phone?: string;
 }
-const {
-  idPrefix,
-  services = fallbackServices,
-  phone = fallback.phone,
-} = Astro.props;
+const { idPrefix, phone = fallback.phone } = Astro.props;
 
 const inputClass =
   'w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500 aria-invalid:border-red-500';
 ---
 
-<form class="consult-form" data-phone={phone} novalidate>
+<form class="consult-form" data-phone={phone} data-form={idPrefix} novalidate>
   <div class="form-fields">
     <div class="grid gap-6 sm:grid-cols-2">
       <div>
@@ -57,30 +51,19 @@ const inputClass =
       </div>
     </div>
 
-    <div class="mt-6">
-      <label for={`${idPrefix}-service`} class="mb-2 block text-sm font-bold text-ink-900">
-        Тип питання
-      </label>
-      <select
-        id={`${idPrefix}-service`}
-        name="service"
-        class="field-service w-full border border-ink-700/20 bg-white px-4 py-3 text-sm text-body focus:border-gold-500"
-      >
-        <option value="">Оберіть напрямок</option>
-        {services.map((s) => <option value={s.id}>{s.title}</option>)}
-        <option value="other">Інше</option>
-      </select>
-    </div>
+    <!-- Practice area, prefilled by service CTAs (data-service) — not asked from the visitor -->
+    <input type="hidden" name="service" class="field-service" value="" />
 
     <div class="mt-6">
       <label for={`${idPrefix}-message`} class="mb-2 block text-sm font-bold text-ink-900">
-        Опис проблеми
+        Коротко про ваше питання
       </label>
       <textarea
         id={`${idPrefix}-message`}
         name="message"
-        rows="4"
-        placeholder="Коротко опишіть вашу ситуацію…"
+        rows="3"
+        maxlength="1000"
+        placeholder="Наприклад: ДТП, потрібна консультація щодо компенсації"
         class="w-full resize-y border border-ink-700/20 bg-white px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-gold-500"></textarea>
     </div>
 
@@ -117,6 +100,8 @@ const inputClass =
 </form>
 
 <script>
+  import { trackEvent } from '../lib/track';
+
   // ---- Phone mask: +38 (0XX) XXX-XX-XX (imask lazy-loaded on first focus) ----
   document.querySelectorAll<HTMLInputElement>('.consult-form .field-phone').forEach((input) => {
     input.addEventListener(
@@ -140,12 +125,12 @@ const inputClass =
   });
 
   // ---- Per-field validation ----
-  const errorOf = (input: HTMLElement) =>
+  const getFieldError = (input: HTMLElement) =>
     input.parentElement?.querySelector<HTMLElement>('.field-error') ?? null;
 
   const setFieldError = (input: HTMLInputElement, message: string) => {
     input.setAttribute('aria-invalid', 'true');
-    const error = errorOf(input);
+    const error = getFieldError(input);
     if (error) {
       error.textContent = message;
       error.classList.remove('hidden');
@@ -156,7 +141,7 @@ const inputClass =
   const clearFieldError = (input: HTMLInputElement) => {
     input.removeAttribute('aria-invalid');
     input.removeAttribute('aria-describedby');
-    errorOf(input)?.classList.add('hidden');
+    getFieldError(input)?.classList.add('hidden');
   };
 
   const validate = (form: HTMLFormElement): boolean => {
@@ -211,19 +196,7 @@ const inputClass =
         status.classList.add('hidden');
         form.querySelector('.form-fields')?.classList.add('hidden');
         form.querySelector('.form-success')?.classList.remove('hidden');
-        // Conversion event: Zaraz (edge tag manager) or in-page GA4/Pixel — whichever is active
-        const w = window as unknown as {
-          zaraz?: { track: (e: string) => void };
-          gtag?: (...args: unknown[]) => void;
-          fbq?: (...args: unknown[]) => void;
-        };
-        try {
-          w.zaraz?.track('lead');
-          w.gtag?.('event', 'generate_lead');
-          w.fbq?.('track', 'Lead');
-        } catch {
-          /* analytics must never break the form */
-        }
+        trackEvent('generate_lead', { form: form.dataset.form });
       } catch {
         status.textContent = `Не вдалося надіслати запит. Зателефонуйте нам: ${form.dataset.phone}`;
         status.className = 'form-status mt-4 text-sm font-semibold text-red-600';
@@ -238,7 +211,7 @@ const inputClass =
 
   const setService = (id: string) => {
     document
-      .querySelectorAll<HTMLSelectElement>('.consult-form .field-service')
+      .querySelectorAll<HTMLInputElement>('.consult-form .field-service')
       .forEach((select) => (select.value = id));
   };
 
@@ -246,7 +219,7 @@ const inputClass =
     trigger.addEventListener('click', (e) => {
       if (!modal) return;
       e.preventDefault();
-      if (trigger.dataset.service) setService(trigger.dataset.service);
+      setService(trigger.dataset.service ?? '');
       modal.showModal();
     });
   });

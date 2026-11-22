@@ -3,15 +3,14 @@ import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import PageHero from '../../components/PageHero.astro';
 import Footer from '../../components/Footer.astro';
-import { cmsEnv, getSettings, getServices, getCase } from '../../lib/cms';
+import { cmsEnv, getSettings, getCase } from '../../lib/cms';
 import { lexicalToHtml } from '../../lib/lexical';
 
 export const prerender = false;
 
 const env = cmsEnv();
-const [settings, services, entry] = await Promise.all([
+const [settings, entry] = await Promise.all([
   getSettings(env),
-  getServices(env),
   getCase(env, Astro.params.slug!),
 ]);
 if (!entry) return Astro.rewrite('/404');
@@ -23,9 +22,8 @@ const html = lexicalToHtml(entry.content);
   title={`${entry.title} — АБ «Марина В.Г. Юридичний захист»`}
   description={entry.description}
   settings={settings}
-  services={services}
 >
-  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
+  <Header settings={settings} />
   <main>
     <PageHero eyebrow={entry.category?.title ?? 'Виграна справа'} title={entry.title} />
 

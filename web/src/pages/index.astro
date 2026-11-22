@@ -2,33 +2,36 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import Trust from '../components/Trust.astro';
 import Services from '../components/Services.astro';
 import About from '../components/About.astro';
 import Cases from '../components/Cases.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import { cmsEnv, getSettings, getServices, getTestimonials } from '../lib/cms';
+import { cmsEnv, getCases, getSettings, getServices, getTestimonials } from '../lib/cms';
 
 export const prerender = false;
 
 const env = cmsEnv();
-const [settings, services, testimonials] = await Promise.all([
+const [settings, services, testimonials, latestCases] = await Promise.all([
   getSettings(env),
   getServices(env),
   getTestimonials(env),
+  getCases(env, 1, undefined, 3),
 ]);
 ---
 
-<Base settings={settings} services={services}>
-  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
+<Base settings={settings}>
+  <Header settings={settings} />
   <main>
     <Hero settings={settings} />
+    <Trust cases={latestCases?.docs ?? []} />
     <Services services={services} extraAreas={settings.extraAreas} />
     <About />
     <Cases />
     <Testimonials testimonials={testimonials} />
-    <Contact settings={settings} services={services} />
+    <Contact settings={settings} />
   </main>
   <Footer settings={settings} />
 </Base>

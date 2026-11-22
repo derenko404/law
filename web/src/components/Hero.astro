@@ -1,5 +1,7 @@
 ---
 import Emblem from './Emblem.astro';
+import Photo from './Photo.astro';
+import { site } from '../data/site';
 import type { SiteSettings } from '../lib/cms';
 
 interface Props {
@@ -7,9 +9,10 @@ interface Props {
 }
 const { settings } = Astro.props;
 const stats = settings.stats;
+const portrait = site.photos.portrait;
 ---
 
-<section id="top" class="relative overflow-hidden bg-ink-950 pt-20">
+<section id="top" class="relative overflow-hidden bg-ink-950 pt-26 sm:pt-30">
   <!-- Watermark emblem -->
   <div class="pointer-events-none absolute -right-40 top-1/2 -translate-y-1/2 text-gold-500/[0.07]">
     <Emblem class="h-[46rem] w-[46rem]" />
@@ -18,34 +21,55 @@ const stats = settings.stats;
   <!-- Deed frame: double gold hairline inset, like an official legal blank -->
   <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
     <div class="relative border border-gold-500/40 p-1.5">
-      <div class="border border-gold-500/25 px-6 py-20 sm:px-12 md:py-28 lg:px-20">
-        <div class="relative max-w-3xl">
-          <p class="mb-5 text-xs font-bold tracking-[0.35em] text-gold-400 uppercase">
-            Адвокатське бюро · {settings.city}
-          </p>
-          <h1 class="display text-5xl leading-[1.08] text-white sm:text-6xl lg:text-7xl">
-            Юридичний захист ваших прав та інтересів
-          </h1>
-          <p class="mt-7 max-w-xl text-lg leading-relaxed text-white/70">
-            Адвокат {settings.lawyer} — 21 рік юридичної практики, колишній працівник
-            прокуратури. Кримінальні, цивільні, адміністративні, митні та сімейні справи в
-            Ужгороді й по всій Україні.
-          </p>
-          <div class="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
-            <a
-              href="/#contact"
-              data-consult
-              class="rounded-sm bg-gold-500 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-ink-950 uppercase transition-colors hover:bg-gold-400"
-            >
-              Отримати консультацію
-            </a>
-            <a
-              href={settings.phoneHref}
-              class="rounded-sm border border-gold-500/50 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-gold-200 uppercase transition-colors hover:border-gold-400 hover:text-gold-400"
-            >
-              {settings.phone}
-            </a>
+      <div class="border border-gold-500/25 px-5 py-12 sm:px-12 sm:py-20 md:py-28 lg:px-20">
+        <div class:list={['relative', portrait.base ? 'grid items-center gap-10 lg:grid-cols-[1fr_22rem]' : 'max-w-3xl']}>
+          <div class="max-w-3xl">
+            <p class="mb-5 text-xs font-bold tracking-[0.35em] text-gold-400 uppercase">
+              Адвокатське бюро · {settings.lawyer}
+            </p>
+            <h1 class="display text-5xl leading-[1.08] text-white sm:text-6xl lg:text-7xl">
+              Адвокат в Ужгороді
+            </h1>
+            <p class="display mt-4 text-2xl text-gold-200 sm:text-3xl">
+              Юридичний захист ваших прав та інтересів
+            </p>
+            <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/70">
+              21 рік юридичної практики, колишній працівник прокуратури. Кримінальні,
+              цивільні, адміністративні, митні та сімейні справи, ДТП — в Ужгороді й по всій
+              Україні.
+            </p>
+            <div class="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center" data-track-area="hero">
+              <a
+                href="/#contact"
+                data-consult
+                class="rounded-sm bg-gold-500 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-ink-950 uppercase transition-colors hover:bg-gold-400"
+              >
+                Отримати консультацію
+              </a>
+              <a
+                href={settings.phoneHref}
+                class="rounded-sm border border-gold-500/50 px-8 py-4 text-center text-sm font-bold tracking-wide whitespace-nowrap text-gold-200 uppercase transition-colors hover:border-gold-400 hover:text-gold-400"
+              >
+                {settings.phone}
+              </a>
+            </div>
           </div>
+
+          {
+            portrait.base && (
+              <div class="relative mx-auto w-full max-w-xs border border-gold-500/40 p-1.5 lg:max-w-none">
+                <Photo
+                  base={portrait.base}
+                  width={portrait.width}
+                  height={portrait.height}
+                  sizes="(min-width: 1024px) 352px, 320px"
+                  alt={`Адвокат ${settings.lawyer}`}
+                  priority
+                  class="aspect-4/5 w-full object-cover object-top"
+                />
+              </div>
+            )
+          }
         </div>
       </div>
     </div>

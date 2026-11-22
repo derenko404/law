@@ -4,7 +4,7 @@ import Analytics from '../components/Analytics.astro';
 import ConsultModal from '../components/ConsultModal.astro';
 import { site } from '../data/site';
 
-import type { CmsService, SiteSettings } from '../lib/cms';
+import type { SiteSettings } from '../lib/cms';
 
 interface Props {
   title?: string;
@@ -15,16 +15,14 @@ interface Props {
   ogType?: string;
   /** CMS data forwarded to the global consultation modal */
   settings?: SiteSettings;
-  services?: CmsService[];
 }
 
 const {
-  title = `Адвокат в Ужгороді — ${site.name}`,
+  title = 'Адвокат Ужгород | Послуги юриста та консультації',
   description = site.description,
-  keywords = 'адвокат, Ужгород, юридична консультація, митні справи, кримінальні справи, цілодобовий адвокат, адвокат Ужгород',
+  keywords = 'адвокат Ужгород, юрист Ужгород, юридична допомога Ужгород, юридична консультація, адвокат ДТП, сімейний адвокат, митні справи, кримінальні справи',
   ogType = 'website',
   settings,
-  services,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -37,11 +35,15 @@ const jsonLd = {
   '@type': 'LegalService',
   name: site.name,
   description,
-  telephone: site.phone,
-  email: site.email,
+  url: Astro.site?.href,
+  image: ogImage.href,
+  telephone: settings?.phone ?? site.phone,
+  email: settings?.email ?? site.email,
+  areaServed: { '@type': 'City', name: 'Ужгород' },
+  openingHours: 'Mo-Su 00:00-23:59',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'вул. Собранецька, 46, офіс 7',
+    streetAddress: 'вул. Мальовнича, 2',
     addressLocality: 'Ужгород',
     postalCode: '88000',
     addressCountry: 'UA',
@@ -91,10 +93,15 @@ const jsonLd = {
   <body>
     <Fragment set:html={emblemDefs} />
     <slot />
-    <ConsultModal services={services} phone={settings?.phone} />
+    <ConsultModal phone={settings?.phone} />
     <Analytics />
 
     <script>
+      import { trackContactClicks } from '../lib/track';
+
+      // Phone / messenger clicks → analytics goals
+      trackContactClicks();
+
       // Scroll reveal
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const revealed = document.querySelectorAll('.reveal');

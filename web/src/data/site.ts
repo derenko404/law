@@ -9,14 +9,30 @@ export const site = {
   shortName: 'Юридичний захист',
   lawyer: 'Марина Віктор Георгійович',
   city: 'Ужгород',
-  address: '88000, м. Ужгород, вул. Собранецька, 46, офіс 7',
+  address: '88000, м. Ужгород, вул. Мальовнича, 2',
   phone: '+38 (050) 96-23-999',
   phoneHref: 'tel:+380509623999',
+  phone2: '+38 (097) 720-17-20',
+  phone2Href: 'tel:+380977201720',
   email: 'advokatuzhgorod8@ukr.net',
-  hours: 'Пн–Пт: 9:00–18:00, за попереднім записом — цілодобово',
-  mapUrl: 'https://maps.google.com/?q=Ужгород,+вул.+Собранецька+46',
+  hours: 'Працюємо цілодобово',
+  mapUrl: 'https://maps.google.com/?q=Ужгород,+вул.+Мальовнича,+2',
   description:
-    'Адвокатське бюро в Ужгороді. Кримінальні, цивільні, адміністративні, митні та сімейні справи. 21 рік практики, 99% позитивних судових рішень.',
+    'Адвокат в Ужгороді: консультації та захист у кримінальних, цивільних, сімейних, митних справах, ДТП і ст. 130 КУпАП. 21 рік практики, 99% позитивних рішень.',
+  /** Bar certificate («свідоцтво про право на заняття адвокатською діяльністю»). Trust block hides the card while `number` is empty. */
+  certificate: {
+    number: '21/536',
+    issuedAt: '12.07.2006',
+    issuedBy: 'Закарпатською обласною КДКА',
+  },
+  /**
+   * Lawyer photos, pre-rendered by `npm run images` into public/img/<base>-{640,1024}.{avif,webp}.
+   * Empty base = slot not rendered (layout falls back to the emblem).
+   */
+  photos: {
+    portrait: { base: '', width: 1024, height: 1280 },
+    workplace: { base: '', width: 1024, height: 683 },
+  },
 } as const;
 
 /** Social links — hrefs are placeholders until the lawyer provides real profiles (editable in CMS later). */

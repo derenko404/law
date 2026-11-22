@@ -14,6 +14,13 @@ export const SiteSettings: GlobalConfig = {
         { name: 'phoneHref', label: 'Телефон (tel:-посилання)', type: 'text', required: true },
       ],
     },
+    {
+      type: 'row',
+      fields: [
+        { name: 'phone2', label: 'Другий телефон (як показується)', type: 'text' },
+        { name: 'phone2Href', label: 'Другий телефон (tel:-посилання)', type: 'text' },
+      ],
+    },
     { name: 'email', label: 'Email', type: 'text', required: true },
     { name: 'address', label: 'Адреса', type: 'text', required: true },
     { name: 'hours', label: 'Графік роботи', type: 'text', required: true },

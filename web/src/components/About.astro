@@ -1,8 +1,11 @@
 ---
 import SectionHeading from './SectionHeading.astro';
 import Emblem from './Emblem.astro';
+import Photo from './Photo.astro';
 import { site } from '../data/site';
 import { credentials, values } from '../data/content';
+
+const workplace = site.photos.workplace;
 ---
 
 <section id="about" class="bg-white py-24">
@@ -10,24 +13,41 @@ import { credentials, values } from '../data/content';
     <SectionHeading eyebrow="Про адвоката" title={site.lawyer} />
 
     <div class="grid gap-10 lg:grid-cols-5">
-      <!-- Credentials panel -->
-      <div class="reveal relative overflow-hidden bg-ink-950 p-10 lg:col-span-2">
-        <div class="pointer-events-none absolute -bottom-16 -right-16 text-gold-500/10">
-          <Emblem class="h-72 w-72" />
+      {
+        workplace.base ? (
+          <figure class="reveal relative lg:col-span-2">
+            <div class="border border-gold-500/40 p-1.5">
+              <Photo
+                base={workplace.base}
+                width={workplace.width}
+                height={workplace.height}
+                sizes="(min-width: 1280px) 493px, (min-width: 1024px) 40vw, 100vw"
+                alt={`Адвокат ${site.lawyer} у робочому кабінеті`}
+                class="aspect-4/3 h-full w-full object-cover"
+              />
+            </div>
+            <figcaption class="mt-3 text-sm text-muted">{site.lawyer}, керівник бюро</figcaption>
+          </figure>
+        ) : (
+        <div class="reveal relative overflow-hidden bg-ink-950 p-10 lg:col-span-2">
+          <div class="pointer-events-none absolute -bottom-16 -right-16 text-gold-500/10">
+            <Emblem class="h-72 w-72" />
+          </div>
+          <Emblem class="h-14 w-14 text-gold-500" />
+          <h3 class="display mt-6 text-3xl text-white">Керівник бюро</h3>
+          <ul class="mt-8 space-y-6">
+            {
+              credentials.map((c) => (
+                <li class="flex gap-4 text-sm leading-relaxed text-white/75">
+                  <span class="mt-2 h-px w-8 shrink-0 bg-gold-500" />
+                  {c}
+                </li>
+              ))
+            }
+          </ul>
         </div>
-        <Emblem class="h-14 w-14 text-gold-500" />
-        <h3 class="display mt-6 text-3xl text-white">Керівник бюро</h3>
-        <ul class="mt-8 space-y-6">
-          {
-            credentials.map((c) => (
-              <li class="flex gap-4 text-sm leading-relaxed text-white/75">
-                <span class="mt-2 h-px w-8 shrink-0 bg-gold-500" />
-                {c}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+        )
+      }
 
       <!-- Story + values -->
       <div class="reveal lg:col-span-3">

@@ -1,0 +1,37 @@
+---
+/**
+ * Responsive photo from public/img, pre-rendered by `npm run images`
+ * into <base>-{640,1024}.{avif,webp}. The page is SSR on Workers, so
+ * astro:assets can't transform at request time.
+ */
+interface Props {
+  base: string;
+  alt: string;
+  width: number;
+  height: number;
+  sizes: string;
+  /** 'eager' + high priority for above-the-fold (LCP) images */
+  priority?: boolean;
+  class?: string;
+}
+const { base, alt, width, height, sizes, priority = false, class: className = '' } = Astro.props;
+
+const getSrcset = (format: string) =>
+  `/img/${base}-640.${format} 640w, /img/${base}-1024.${format} 1024w`;
+---
+
+<picture class="block">
+  <source type="image/avif" srcset={getSrcset('avif')} sizes={sizes} />
+  <img
+    src={`/img/${base}-1024.webp`}
+    srcset={getSrcset('webp')}
+    sizes={sizes}
+    width={width}
+    height={height}
+    alt={alt}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    decoding="async"
+    class={className}
+  />
+</picture>

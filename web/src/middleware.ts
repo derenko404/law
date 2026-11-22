@@ -11,7 +11,8 @@ const CACHE_TTL = 300;
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request } = context;
 
-  if (request.method !== 'GET' || context.url.pathname.startsWith('/api/')) {
+  // Local dev runs in workerd too, where caches.default persists — skip it so edits show up immediately
+  if (import.meta.env.DEV || request.method !== 'GET' || context.url.pathname.startsWith('/api/')) {
     return next();
   }
 

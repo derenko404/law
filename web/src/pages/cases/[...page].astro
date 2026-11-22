@@ -5,7 +5,7 @@ import PageHero from '../../components/PageHero.astro';
 import Pagination from '../../components/Pagination.astro';
 import CategoryChips from '../../components/CategoryChips.astro';
 import Footer from '../../components/Footer.astro';
-import { cmsEnv, getSettings, getServices, getCases, getCategories } from '../../lib/cms';
+import { cmsEnv, getSettings, getCases, getCategories } from '../../lib/cms';
 
 export const prerender = false;
 
@@ -17,9 +17,8 @@ const activeCategory = Astro.url.searchParams.get('category') ?? undefined;
 const query = activeCategory ? `?category=${encodeURIComponent(activeCategory)}` : '';
 
 const env = cmsEnv();
-const [settings, services, categories, result] = await Promise.all([
+const [settings, categories, result] = await Promise.all([
   getSettings(env),
-  getServices(env),
   getCategories(env),
   getCases(env, pageNum, activeCategory),
 ]);
@@ -42,9 +41,8 @@ const page = {
   title="Виграні справи — АБ «Марина В.Г. Юридичний захист»"
   description="Приклади виграних справ адвоката в Ужгороді: кримінальні, митні, цивільні та адміністративні провадження."
   settings={settings}
-  services={services}
 >
-  <Header phone={settings.phone} phoneHref={settings.phoneHref} />
+  <Header settings={settings} />
   <main>
     <PageHero
       eyebrow="Практика в судах"

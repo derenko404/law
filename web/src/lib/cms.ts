@@ -52,6 +52,9 @@ export interface SiteSettings {
   city: string;
   phone: string;
   phoneHref: string;
+  /** Optional second number; empty string when not set */
+  phone2: string;
+  phone2Href: string;
   email: string;
   address: string;
   hours: string;
@@ -77,6 +80,8 @@ export async function getSettings(env: CmsEnv): Promise<SiteSettings> {
       ...staticSite,
       phone: fallbackSite.phone,
       phoneHref: fallbackSite.phoneHref,
+      phone2: fallbackSite.phone2,
+      phone2Href: fallbackSite.phone2Href,
       email: fallbackSite.email,
       address: fallbackSite.address,
       hours: fallbackSite.hours,
@@ -92,6 +97,9 @@ export async function getSettings(env: CmsEnv): Promise<SiteSettings> {
     ...staticSite,
     phone: String(doc.phone),
     phoneHref: String(doc.phoneHref),
+    // Field absent (CMS not migrated yet) or never set → seed number; an empty string hides it
+    phone2: String(doc.phone2 ?? fallbackSite.phone2),
+    phone2Href: String(doc.phone2Href ?? fallbackSite.phone2Href),
     email: String(doc.email),
     address: String(doc.address),
     hours: String(doc.hours),
